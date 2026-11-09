@@ -116,11 +116,13 @@ html{-webkit-tap-highlight-color:transparent}
   #list .bar input{font-size:16px;padding:13px 14px;border-radius:14px}
   .count{width:100%;font-size:13px}
   .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:6px!important}
-  .tagbtn{aspect-ratio:1/0.72;min-height:0;flex-direction:column;align-items:flex-start;justify-content:space-between;
+  .tagbtn{aspect-ratio:1/0.92;min-height:0;flex-direction:column;align-items:flex-start;justify-content:space-between;
     padding:22px 14px 14px;border-radius:18px;border-top-width:1px}
   .tagbtn::after{right:14px;left:auto;top:-1px;width:12px;height:17px}
   .tagbtn::before{display:none}
-  .tagbtn .nm{font-size:20px;line-height:1.15;overflow-wrap:anywhere}
+  .tagbtn .nm{font-size:18px;line-height:1.15;overflow-wrap:anywhere}
+  .tagbtn{padding-top:16px}
+  .tagbtn .av{width:48px;height:48px;font-size:18px}
   .tagbtn .st{font-size:12.5px;line-height:1.3;padding-right:18px}
   .tagbtn > .chev{position:absolute;right:12px;bottom:11px;font-size:20px;line-height:1;opacity:.55}
   .tagbtn:hover{transform:none}
@@ -134,9 +136,16 @@ html{-webkit-tap-highlight-color:transparent}
   .appbar button:active{background:rgba(255,255,255,.15)}
   .appbar span{font-family:var(--display);font-weight:700;font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   body.in-detail .sheet{border-radius:16px;padding:18px;gap:16px}
-  body.in-detail .sheet .back,body.in-detail .sheet .sheet-top{display:none}
+  body.in-detail .sheet .back{display:none}
   .sheet .val{font-size:17px;line-height:1.6}
 }
+.av{width:52px;height:52px;border-radius:50%;flex:none;object-fit:cover;display:grid;place-items:center;
+  background:var(--tag);color:var(--berry);font-family:var(--display);font-weight:800;font-size:20px;border:2px solid var(--paper);box-shadow:0 0 0 2px var(--gold)}
+.tagbtn.filled .av{background:rgba(255,255,255,.18);color:#fff;border-color:var(--filled);box-shadow:0 0 0 2px #fff}
+.tagbtn .who{display:flex;flex-direction:column;gap:8px;min-width:0}
+.hero-av{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.hero-av .av{width:120px;height:120px;font-size:44px;box-shadow:0 0 0 3px var(--gold)}
+.hero-av .nm2{font-family:var(--display);font-weight:800;font-size:26px;line-height:1.1}
 .gifts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
 .gifts li{display:flex;gap:10px;align-items:flex-start;background:var(--tag);border-radius:12px;padding:12px 14px;font-size:17px;overflow-wrap:anywhere}
 .gifts li::before{content:"🎁";flex:none}
@@ -167,7 +176,7 @@ html{-webkit-tap-highlight-color:transparent}
   </section>
 
   <section id="detail" class="sheet" hidden aria-live="polite"></section>
-  <p class="foot">Boas festas! Guarde segredo de quem você tirou.<br><a href="admin.html" style="color:var(--muted)">Área restrita</a><br><span style="font-size:12px;opacity:.7">Versão 1.6 · 09/11 17:25</span></p>
+  <p class="foot">Boas festas! Guarde segredo de quem você tirou.<br><a href="admin.html" style="color:var(--muted)">Área restrita</a><br><span style="font-size:12px;opacity:.7">Versão 1.8 · 09/11 17:25</span></p>
 </div>
 <script>
 const $=id=>document.getElementById(id);
@@ -175,6 +184,8 @@ let PRESENTES={},NAMES=[];
 let current=null;
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function linkify(s){return esc(s).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>')}
+function initials(n){const p=n.trim().split(/\s+/);return (p[0][0]+(p.length>1?p[p.length-1][0]:"")).toUpperCase()}
+function avatar(n,d){return d&&d.foto?`<img class="av" src="${esc(d.foto)}" alt="" loading="lazy">`:`<span class="av" aria-hidden="true">${esc(initials(n))}</span>`}
 function filled(d){return d && String(d.quero||"").trim().length>0}
 function renderGrid(){
   const q=$("q").value.trim().toLowerCase();const g=$("grid");g.innerHTML="";let n=0;
@@ -182,7 +193,7 @@ function renderGrid(){
     if(q&&!name.toLowerCase().includes(q))return;
     const li=document.createElement("li"),b=document.createElement("button");
     b.type="button";b.className="tagbtn"+(filled(d)?" filled":"");
-    b.innerHTML=`<span class="nm">${esc(name)}</span><span class="st ${filled(d)?"on":""}">${filled(d)?"Ver presentes":"Ainda sem presentes"}</span>`;
+    b.innerHTML=`<span class="who">${avatar(name,d)}<span class="nm">${esc(name)}</span></span><span class="st ${filled(d)?"on":""}">${filled(d)?"Ver presentes":"Ainda sem presentes"}</span>`;
     b.insertAdjacentHTML("beforeend",'<span class="chev" aria-hidden="true">›</span>');b.onclick=()=>open(name);li.appendChild(b);g.appendChild(li)});
   $("count").textContent=`${n} de ${NAMES.length} já preencheram`;
 }
@@ -195,7 +206,7 @@ function renderDetail(){
   const d=PRESENTES[current]||{};
   const row=(lbl,v,html)=>`<div class="field"><span class="lbl">${lbl}</span>${v&&String(v).trim()?`<p class="val">${html?linkify(v):esc(v)}</p>`:`<p class="val empty">—</p>`}</div>`;
   $("detail").innerHTML=`<button class="back" type="button" id="back">← Voltar para a lista</button>
-    <div class="sheet-top"><div><span class="lbl">Presentes para</span><h2>${esc(current)}</h2></div></div>
+    <div class="hero-av">${avatar(current,d)}<div><span class="lbl">Presentes para</span><div class="nm2">${esc(current)}</div></div></div>
     ${filled(d)?`<div class="field"><span class="lbl">Escolha um destes presentes</span><ul class="gifts">${String(d.quero).split(/\n+/).filter(t=>t.trim()).map(t=>`<li><span>${linkify(t.trim())}</span></li>`).join("")}</ul></div>
       ${[d.tamanhos&&String(d.tamanhos).trim()?row("Tamanhos",d.tamanhos):"",d.gostos&&String(d.gostos).trim()?row("Cores ou gostos",d.gostos):""].filter(Boolean).length?`<div class="two">${d.tamanhos&&String(d.tamanhos).trim()?row("Tamanhos",d.tamanhos):""}${d.gostos&&String(d.gostos).trim()?row("Cores ou gostos",d.gostos):""}</div>`:""}`
     :`<p class="empty" style="margin:0">Os presentes de ${esc(current)} ainda não foram cadastrados. Volte mais tarde.</p>`}`;
