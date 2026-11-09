@@ -3,6 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#9e1b2a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Amigo Secreto">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
 <title>Amigo Secreto de Natal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600;1,9..144,800&family=Figtree:wght@400;500;600&display=swap">
@@ -94,10 +102,49 @@ form textarea{min-height:96px;resize:vertical}
 .msg.err{color:var(--berry)}
 .upd{font-size:13px;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){.tagbtn{transition:none}.tagbtn:hover{transform:none}}
+/* ===== Modo app (celular) ===== */
+.appbar{display:none}
+html{-webkit-tap-highlight-color:transparent}
+@media (max-width:640px){
+  body{overscroll-behavior-y:none}
+  button,.tagbtn{-webkit-user-select:none;user-select:none}
+  .hero-in{padding-block:calc(18px + env(safe-area-inset-top,0px)) 18px;gap:4px}
+  .hero h1{font-size:30px}
+  .hero .lead{font-size:15px}
+  .wrap{padding-block:14px calc(32px + env(safe-area-inset-bottom,0px));gap:14px}
+  #list .bar{position:sticky;top:0;z-index:5;background:var(--bg);padding-block:10px;margin-top:-10px}
+  #list .bar input{font-size:16px;padding:13px 14px;border-radius:14px}
+  .count{width:100%;font-size:13px}
+  .grid{grid-template-columns:1fr;gap:8px;margin-top:6px!important}
+  .tagbtn{flex-direction:row;align-items:center;justify-content:space-between;min-height:64px;padding:12px 40px 12px 34px;border-radius:14px;border-top-width:1px}
+  .tagbtn::after{right:auto;left:12px;top:-1px;width:10px;height:14px}
+  .tagbtn::before{display:none}
+  .tagbtn .nm{font-size:18px}
+  .tagbtn .st{font-size:13px;text-align:right}
+  .tagbtn{background-image:linear-gradient(transparent,transparent)}
+  .tagbtn > .chev{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:22px;line-height:1;opacity:.55}
+  .tagbtn:hover{transform:none}
+  .tagbtn:active{transform:scale(.98);filter:brightness(.97)}
+  body.in-detail .hero, body.in-detail .garland, body.in-detail .foot{display:none}
+  body.in-detail .appbar{display:flex;position:sticky;top:0;z-index:20;align-items:center;gap:6px;
+    background:var(--band);color:var(--band-ink);min-height:56px;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-left:max(6px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .appbar button{font:inherit;font-size:28px;line-height:1;background:none;border:0;color:inherit;width:44px;height:44px;border-radius:22px;cursor:pointer}
+  .appbar button:active{background:rgba(255,255,255,.15)}
+  .appbar span{font-family:var(--display);font-weight:700;font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  body.in-detail .sheet{border-radius:16px;padding:18px;gap:16px}
+  body.in-detail .sheet .back,body.in-detail .sheet .sheet-top{display:none}
+  .sheet .val{font-size:17px;line-height:1.6}
+}
+.gifts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.gifts li{display:flex;gap:10px;align-items:flex-start;background:var(--tag);border-radius:12px;padding:12px 14px;font-size:17px;overflow-wrap:anywhere}
+.gifts li::before{content:"🎁";flex:none}
 </style>
 <style>body{margin:0;font-size:16px}[hidden]{display:none!important}</style>
 </head>
 <body>
+<div class="appbar" aria-hidden="true"><button type="button" id="ab-back" aria-label="Voltar">‹</button><span id="ab-title"></span></div>
 <header class="hero">
   <canvas id="snow" aria-hidden="true"></canvas>
   <div class="hero-in">
@@ -120,7 +167,7 @@ form textarea{min-height:96px;resize:vertical}
   </section>
 
   <section id="detail" class="sheet" hidden aria-live="polite"></section>
-  <p class="foot">Boas festas! Guarde segredo de quem você tirou.<br><a href="admin.html" style="color:var(--muted)">Área restrita</a><br><span style="font-size:12px;opacity:.7">Versão 1.4 · 09/11 17:15</span></p>
+  <p class="foot">Boas festas! Guarde segredo de quem você tirou.<br><a href="admin.html" style="color:var(--muted)">Área restrita</a><br><span style="font-size:12px;opacity:.7">Versão 1.5 · 09/11 17:20</span></p>
 </div>
 <script>
 const $=id=>document.getElementById(id);
@@ -135,23 +182,27 @@ function renderGrid(){
     if(q&&!name.toLowerCase().includes(q))return;
     const li=document.createElement("li"),b=document.createElement("button");
     b.type="button";b.className="tagbtn"+(filled(d)?" filled":"");
-    b.innerHTML=`<span class="nm">${esc(name)}</span><span class="st ${filled(d)?"on":""}">${filled(d)?"Ver presentes →":"Ainda sem presentes"}</span>`;
-    b.onclick=()=>open(name);li.appendChild(b);g.appendChild(li)});
+    b.innerHTML=`<span class="nm">${esc(name)}</span><span class="st ${filled(d)?"on":""}">${filled(d)?"Ver presentes":"Ainda sem presentes"}</span>`;
+    b.insertAdjacentHTML("beforeend",'<span class="chev" aria-hidden="true">›</span>');b.onclick=()=>open(name);li.appendChild(b);g.appendChild(li)});
   $("count").textContent=`${n} de ${NAMES.length} já preencheram`;
 }
-function open(name){current=name;$("list").hidden=true;$("detail").hidden=false;renderDetail();scrollTo(0,0);history.replaceState(null,"","#"+encodeURIComponent(name))}
-function close(){current=null;$("detail").hidden=true;$("list").hidden=false;renderGrid();history.replaceState(null,"",location.pathname)}
+function show(name){current=name;document.body.classList.add("in-detail");$("ab-title").textContent=name;$("list").hidden=true;$("detail").hidden=false;renderDetail();scrollTo(0,0)}
+function open(name){show(name);history.pushState({p:name},"","#"+encodeURIComponent(name))}
+function hide(){current=null;document.body.classList.remove("in-detail");$("detail").hidden=true;$("list").hidden=false;renderGrid()}
+function close(){if(history.state&&history.state.p)history.back();else{hide();history.replaceState(null,"",location.pathname)}}
+addEventListener("popstate",()=>{const h=decodeURIComponent(location.hash.slice(1));if(h&&PRESENTES[h])show(h);else hide()});
 function renderDetail(){
   const d=PRESENTES[current]||{};
   const row=(lbl,v,html)=>`<div class="field"><span class="lbl">${lbl}</span>${v&&String(v).trim()?`<p class="val">${html?linkify(v):esc(v)}</p>`:`<p class="val empty">—</p>`}</div>`;
   $("detail").innerHTML=`<button class="back" type="button" id="back">← Voltar para a lista</button>
     <div class="sheet-top"><div><span class="lbl">Presentes para</span><h2>${esc(current)}</h2></div></div>
-    ${filled(d)?`${row("Escolha um destes presentes",d.quero,true)}
-      <div class="two">${row("Tamanhos",d.tamanhos)}${row("Cores ou gostos",d.gostos)}</div>`
+    ${filled(d)?`<div class="field"><span class="lbl">Escolha um destes presentes</span><ul class="gifts">${String(d.quero).split(/\n+/).filter(t=>t.trim()).map(t=>`<li><span>${linkify(t.trim())}</span></li>`).join("")}</ul></div>
+      ${[d.tamanhos&&String(d.tamanhos).trim()?row("Tamanhos",d.tamanhos):"",d.gostos&&String(d.gostos).trim()?row("Cores ou gostos",d.gostos):""].filter(Boolean).length?`<div class="two">${d.tamanhos&&String(d.tamanhos).trim()?row("Tamanhos",d.tamanhos):""}${d.gostos&&String(d.gostos).trim()?row("Cores ou gostos",d.gostos):""}</div>`:""}`
     :`<p class="empty" style="margin:0">Os presentes de ${esc(current)} ainda não foram cadastrados. Volte mais tarde.</p>`}`;
   $("back").onclick=close;
 }
 $("q").addEventListener("input",renderGrid);
+$("ab-back").onclick=close;
 (function snow(){
   const c=$("snow"); if(!c||!c.getContext) return;
   const x=c.getContext("2d"); let w,h,flakes=[];
@@ -165,7 +216,7 @@ $("q").addEventListener("input",renderGrid);
 })();
 $("count").textContent="Carregando…";
 fetch("presentes.json?v="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(d=>{PRESENTES=d;NAMES=Object.keys(d);renderGrid();
-  const h=decodeURIComponent(location.hash.slice(1));if(h&&PRESENTES[h])open(h);
+  const h=decodeURIComponent(location.hash.slice(1));if(h&&PRESENTES[h])show(h);
 }).catch(()=>{$("count").textContent="Não foi possível carregar a lista. Atualize a página."});
 </script>
 </body>
