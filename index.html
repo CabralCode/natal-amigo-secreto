@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Amigo Secreto de Natal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600;1,9..144,800&family=Figtree:wght@400;500;600&display=swap">
+<style>
+/* Layout: etiquetas de presente em grade; tocar abre a ficha da pessoa com o que ela quer ganhar */
+:root{
+  --bg:#fbf6f0; --paper:#ffffff; --ink:#2a1b1b; --muted:#6e5c58; --line:#ead9cf;
+  --pine:#1d5a3a; --pine-ink:#ffffff; --berry:#b3202f; --tag:#f6e8dc; --ok:#1d7a47;
+  --band:#9e1b2a; --band-ink:#fff6ea; --gold:#c9972b; --snow:rgba(255,255,255,.85);
+  --display:"Fraunces",Georgia,"Times New Roman",serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1a14; --paper:#16241c; --ink:#f3ece4; --muted:#b4a89f; --line:#2b3d32;
+  --pine:#6cc995; --pine-ink:#0d1a12; --berry:#f07a84; --tag:#1d3026; --ok:#7fdca5;
+  --band:#6e1220; --band-ink:#fff3e2; --gold:#e3b54f; --snow:rgba(255,255,255,.7); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1a14; --paper:#16241c; --ink:#f3ece4; --muted:#b4a89f; --line:#2b3d32;
+  --pine:#6cc995; --pine-ink:#0d1a12; --berry:#f07a84; --tag:#1d3026; --ok:#7fdca5;
+  --band:#6e1220; --band-ink:#fff3e2; --gold:#e3b54f; --snow:rgba(255,255,255,.7); color-scheme:dark}
+*{box-sizing:border-box}
+.hero{position:relative;overflow:hidden;background:var(--band);color:var(--band-ink);
+  background-image:radial-gradient(circle at 15% 120%,rgba(255,255,255,.08) 0 40%,transparent 41%),radial-gradient(circle at 90% -30%,rgba(255,255,255,.07) 0 35%,transparent 36%)}
+.hero-in{max-width:880px;margin:0 auto;padding-block:40px 34px;position:relative;z-index:1;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:8px}
+.hero .eyebrow{color:var(--gold)}
+.hero h1 em{font-style:italic;color:var(--gold)}
+.hero .lead{color:var(--band-ink);opacity:.88}
+.garland{height:14px;background:repeating-linear-gradient(90deg,var(--pine) 0 22px,var(--gold) 22px 26px);
+  -webkit-mask:radial-gradient(circle 9px at 13px -2px,#000 98%,transparent) 0 0/26px 14px repeat-x;mask:radial-gradient(circle 9px at 13px -2px,#000 98%,transparent) 0 0/26px 14px repeat-x}
+#snow{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.tagbtn{border-top:3px solid var(--berry)}
+.tagbtn::after{content:"";position:absolute;right:12px;top:-3px;width:14px;height:20px;background:var(--gold);
+  clip-path:polygon(0 0,100% 0,100% 100%,50% 75%,0 100%)}
+.sheet{border-top:4px solid var(--berry)}
+.foot{text-align:center;color:var(--muted);font-size:13px}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5}
+.wrap{max-width:880px;margin:0 auto;padding-block:28px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:22px}
+header{display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--berry);font-weight:600}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(30px,7vw,46px);line-height:1.05;margin:0;text-wrap:balance;letter-spacing:-.01em}
+.lead{color:var(--muted);margin:0;max-width:60ch}
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.bar input{flex:1;min-width:0;font:inherit;padding:11px 14px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
+.count{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.note{font-size:14px;color:var(--muted);background:var(--tag);padding:10px 14px;border-radius:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;list-style:none;margin:0;padding:0}
+.tagbtn{position:relative;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;
+  background:var(--paper);border:1px solid var(--line);border-radius:6px 14px 14px 6px;padding:16px 14px 14px 30px;
+  display:flex;flex-direction:column;gap:4px;min-height:88px;transition:transform .15s,border-color .15s}
+.tagbtn::before{content:"";position:absolute;left:11px;top:50%;width:9px;height:9px;margin-top:-4.5px;border-radius:50%;
+  border:2px solid var(--line);background:var(--bg)}
+.tagbtn:hover{transform:translateY(-2px);border-color:var(--pine)}
+.tagbtn:focus-visible{outline:3px solid var(--pine);outline-offset:2px}
+.tagbtn .nm{font-family:var(--display);font-weight:700;font-size:19px;line-height:1.15}
+.st{font-size:13px;color:var(--muted)}
+.st.on{color:var(--ok);font-weight:600}
+.tagbtn.filled::before{background:var(--ok);border-color:var(--ok)}
+/* ficha */
+.sheet{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:18px}
+.sheet-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.sheet h2{font-family:var(--display);font-weight:800;font-size:clamp(26px,6vw,36px);margin:0;line-height:1.05}
+.back{font:inherit;font-size:14px;background:none;border:0;color:var(--pine);cursor:pointer;padding:0;font-weight:600;align-self:flex-start}
+.btn{font:inherit;font-weight:600;border-radius:10px;padding:10px 16px;cursor:pointer;border:1px solid var(--pine);background:var(--pine);color:var(--pine-ink)}
+.btn.ghost{background:transparent;color:var(--pine)}
+.btn:focus-visible,.back:focus-visible{outline:3px solid var(--pine);outline-offset:2px}
+.btn[disabled]{opacity:.55;cursor:default}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.lbl{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.val{white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+.val a{color:var(--pine)}
+.empty{color:var(--muted);font-style:italic}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:520px){.two{grid-template-columns:1fr}}
+form{display:flex;flex-direction:column;gap:14px}
+form label{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:14px}
+form textarea,form input{font:inherit;font-weight:400;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
+form textarea{min-height:96px;resize:vertical}
+.hint{font-weight:400;color:var(--muted);font-size:13px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.msg{font-size:14px;color:var(--muted)}
+.msg.err{color:var(--berry)}
+.upd{font-size:13px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.tagbtn{transition:none}.tagbtn:hover{transform:none}}
+</style>
+<style>body{margin:0;font-size:16px}[hidden]{display:none!important}</style>
+</head>
+<body>
+<header class="hero">
+  <canvas id="snow" aria-hidden="true"></canvas>
+  <div class="hero-in">
+    <span class="eyebrow">Natal 2026 · 15 participantes</span>
+    <h1>Amigo Secreto <em>de Natal</em></h1>
+    <p class="lead">Toque no nome de quem você tirou para ver o que essa pessoa quer ganhar.</p>
+  </div>
+</header>
+<div class="garland" aria-hidden="true"></div>
+
+<div class="wrap">
+
+  
+  <section id="list" aria-label="Participantes">
+    <div class="bar">
+      <input id="q" type="search" placeholder="Buscar nome…" aria-label="Buscar nome" autocomplete="off">
+      <span class="count" id="count"></span>
+    </div>
+    <ul class="grid" id="grid" style="margin-top:14px"></ul>
+  </section>
+
+  <section id="detail" class="sheet" hidden aria-live="polite"></section>
+  <p class="foot">Boas festas! Guarde segredo de quem você tirou.<br><a href="admin.html" style="color:var(--muted)">Área restrita</a></p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+let PRESENTES={},NAMES=[];
+let current=null;
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function linkify(s){return esc(s).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>')}
+function filled(d){return d && String(d.quero||"").trim().length>0}
+function renderGrid(){
+  const q=$("q").value.trim().toLowerCase();const g=$("grid");g.innerHTML="";let n=0;
+  NAMES.forEach(name=>{const d=PRESENTES[name];if(filled(d))n++;
+    if(q&&!name.toLowerCase().includes(q))return;
+    const li=document.createElement("li"),b=document.createElement("button");
+    b.type="button";b.className="tagbtn"+(filled(d)?" filled":"");
+    b.innerHTML=`<span class="nm">${esc(name)}</span><span class="st ${filled(d)?"on":""}">${filled(d)?"Lista pronta":"Ainda não preencheu"}</span>`;
+    b.onclick=()=>open(name);li.appendChild(b);g.appendChild(li)});
+  $("count").textContent=`${n} de ${NAMES.length} já preencheram`;
+}
+function open(name){current=name;$("list").hidden=true;$("detail").hidden=false;renderDetail();scrollTo(0,0);history.replaceState(null,"","#"+encodeURIComponent(name))}
+function close(){current=null;$("detail").hidden=true;$("list").hidden=false;renderGrid();history.replaceState(null,"",location.pathname)}
+function renderDetail(){
+  const d=PRESENTES[current]||{};
+  const row=(lbl,v,html)=>`<div class="field"><span class="lbl">${lbl}</span>${v&&String(v).trim()?`<p class="val">${html?linkify(v):esc(v)}</p>`:`<p class="val empty">—</p>`}</div>`;
+  $("detail").innerHTML=`<button class="back" type="button" id="back">← Voltar para a lista</button>
+    <div class="sheet-top"><h2>${esc(current)}</h2></div>
+    ${filled(d)?`${row("Gostaria de ganhar",d.quero,true)}
+      <div class="two">${row("Tamanhos",d.tamanhos)}${row("Cores ou gostos",d.gostos)}</div>
+      ${row("Links de exemplo",d.links,true)}${row("Não quero ganhar",d.naoquero)}`
+    :`<p class="empty" style="margin:0">${esc(current)} ainda não escreveu o que quer ganhar.</p>`}`;
+  $("back").onclick=close;
+}
+$("q").addEventListener("input",renderGrid);
+(function snow(){
+  const c=$("snow"); if(!c||!c.getContext) return;
+  const x=c.getContext("2d"); let w,h,flakes=[];
+  const still=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function size(){const r=c.getBoundingClientRect(),d=window.devicePixelRatio||1;w=r.width;h=r.height;c.width=w*d;c.height=h*d;x.setTransform(d,0,0,d,0,0);
+    flakes=Array.from({length:Math.round(w/14)},()=>({x:Math.random()*w,y:Math.random()*h,r:1+Math.random()*2.4,s:.3+Math.random()*.8,d:Math.random()*6}))}
+  function draw(){x.clearRect(0,0,w,h);x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue("--snow")||"#fff";
+    flakes.forEach(f=>{x.beginPath();x.arc(f.x,f.y,f.r,0,7);x.fill();if(!still){f.y+=f.s;f.x+=Math.sin((f.y+f.d*40)/40)*.3;if(f.y>h+4){f.y=-4;f.x=Math.random()*w}}});
+    if(!still) requestAnimationFrame(draw)}
+  size();addEventListener("resize",size);draw();
+})();
+$("count").textContent="Carregando…";
+fetch("presentes.json?v="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(d=>{PRESENTES=d;NAMES=Object.keys(d);renderGrid();
+  const h=decodeURIComponent(location.hash.slice(1));if(h&&PRESENTES[h])open(h);
+}).catch(()=>{$("count").textContent="Não foi possível carregar a lista. Atualize a página."});
+</script>
+</body>
+</html>

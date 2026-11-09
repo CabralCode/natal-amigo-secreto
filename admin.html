@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Admin · Amigo Secreto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600;1,9..144,800&family=Figtree:wght@400;500;600&display=swap">
+<style>
+/* Layout: etiquetas de presente em grade; tocar abre a ficha da pessoa com o que ela quer ganhar */
+:root{
+  --bg:#fbf6f0; --paper:#ffffff; --ink:#2a1b1b; --muted:#6e5c58; --line:#ead9cf;
+  --pine:#1d5a3a; --pine-ink:#ffffff; --berry:#b3202f; --tag:#f6e8dc; --ok:#1d7a47;
+  --band:#9e1b2a; --band-ink:#fff6ea; --gold:#c9972b; --snow:rgba(255,255,255,.85);
+  --display:"Fraunces",Georgia,"Times New Roman",serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1a14; --paper:#16241c; --ink:#f3ece4; --muted:#b4a89f; --line:#2b3d32;
+  --pine:#6cc995; --pine-ink:#0d1a12; --berry:#f07a84; --tag:#1d3026; --ok:#7fdca5;
+  --band:#6e1220; --band-ink:#fff3e2; --gold:#e3b54f; --snow:rgba(255,255,255,.7); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1a14; --paper:#16241c; --ink:#f3ece4; --muted:#b4a89f; --line:#2b3d32;
+  --pine:#6cc995; --pine-ink:#0d1a12; --berry:#f07a84; --tag:#1d3026; --ok:#7fdca5;
+  --band:#6e1220; --band-ink:#fff3e2; --gold:#e3b54f; --snow:rgba(255,255,255,.7); color-scheme:dark}
+*{box-sizing:border-box}
+.hero{position:relative;overflow:hidden;background:var(--band);color:var(--band-ink);
+  background-image:radial-gradient(circle at 15% 120%,rgba(255,255,255,.08) 0 40%,transparent 41%),radial-gradient(circle at 90% -30%,rgba(255,255,255,.07) 0 35%,transparent 36%)}
+.hero-in{max-width:880px;margin:0 auto;padding-block:40px 34px;position:relative;z-index:1;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:8px}
+.hero .eyebrow{color:var(--gold)}
+.hero h1 em{font-style:italic;color:var(--gold)}
+.hero .lead{color:var(--band-ink);opacity:.88}
+.garland{height:14px;background:repeating-linear-gradient(90deg,var(--pine) 0 22px,var(--gold) 22px 26px);
+  -webkit-mask:radial-gradient(circle 9px at 13px -2px,#000 98%,transparent) 0 0/26px 14px repeat-x;mask:radial-gradient(circle 9px at 13px -2px,#000 98%,transparent) 0 0/26px 14px repeat-x}
+#snow{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.tagbtn{border-top:3px solid var(--berry)}
+.tagbtn::after{content:"";position:absolute;right:12px;top:-3px;width:14px;height:20px;background:var(--gold);
+  clip-path:polygon(0 0,100% 0,100% 100%,50% 75%,0 100%)}
+.sheet{border-top:4px solid var(--berry)}
+.foot{text-align:center;color:var(--muted);font-size:13px}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5}
+.wrap{max-width:880px;margin:0 auto;padding-block:28px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:22px}
+header{display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--berry);font-weight:600}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(30px,7vw,46px);line-height:1.05;margin:0;text-wrap:balance;letter-spacing:-.01em}
+.lead{color:var(--muted);margin:0;max-width:60ch}
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.bar input{flex:1;min-width:0;font:inherit;padding:11px 14px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
+.count{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.note{font-size:14px;color:var(--muted);background:var(--tag);padding:10px 14px;border-radius:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;list-style:none;margin:0;padding:0}
+.tagbtn{position:relative;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;
+  background:var(--paper);border:1px solid var(--line);border-radius:6px 14px 14px 6px;padding:16px 14px 14px 30px;
+  display:flex;flex-direction:column;gap:4px;min-height:88px;transition:transform .15s,border-color .15s}
+.tagbtn::before{content:"";position:absolute;left:11px;top:50%;width:9px;height:9px;margin-top:-4.5px;border-radius:50%;
+  border:2px solid var(--line);background:var(--bg)}
+.tagbtn:hover{transform:translateY(-2px);border-color:var(--pine)}
+.tagbtn:focus-visible{outline:3px solid var(--pine);outline-offset:2px}
+.tagbtn .nm{font-family:var(--display);font-weight:700;font-size:19px;line-height:1.15}
+.st{font-size:13px;color:var(--muted)}
+.st.on{color:var(--ok);font-weight:600}
+.tagbtn.filled::before{background:var(--ok);border-color:var(--ok)}
+/* ficha */
+.sheet{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:18px}
+.sheet-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.sheet h2{font-family:var(--display);font-weight:800;font-size:clamp(26px,6vw,36px);margin:0;line-height:1.05}
+.back{font:inherit;font-size:14px;background:none;border:0;color:var(--pine);cursor:pointer;padding:0;font-weight:600;align-self:flex-start}
+.btn{font:inherit;font-weight:600;border-radius:10px;padding:10px 16px;cursor:pointer;border:1px solid var(--pine);background:var(--pine);color:var(--pine-ink)}
+.btn.ghost{background:transparent;color:var(--pine)}
+.btn:focus-visible,.back:focus-visible{outline:3px solid var(--pine);outline-offset:2px}
+.btn[disabled]{opacity:.55;cursor:default}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.lbl{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.val{white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+.val a{color:var(--pine)}
+.empty{color:var(--muted);font-style:italic}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:520px){.two{grid-template-columns:1fr}}
+form{display:flex;flex-direction:column;gap:14px}
+form label{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:14px}
+form textarea,form input{font:inherit;font-weight:400;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
+form textarea{min-height:96px;resize:vertical}
+.hint{font-weight:400;color:var(--muted);font-size:13px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.msg{font-size:14px;color:var(--muted)}
+.msg.err{color:var(--berry)}
+.upd{font-size:13px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.tagbtn{transition:none}.tagbtn:hover{transform:none}}
+</style>
+<style>body{margin:0;font-size:16px}[hidden]{display:none!important}</style>
+<style>
+.login{max-width:460px;display:flex;flex-direction:column;gap:14px}
+.login ol{margin:6px 0 0;padding-left:20px;color:var(--muted);font-size:14px;display:flex;flex-direction:column;gap:4px}
+.person{background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--berry);border-radius:14px}
+.person summary{cursor:pointer;padding:14px 16px;display:flex;justify-content:space-between;gap:10px;align-items:center;list-style:none}
+.person summary::-webkit-details-marker{display:none}
+.person summary .nm{font-family:var(--display);font-weight:700;font-size:19px}
+.person form{padding:0 16px 16px}
+.list{display:flex;flex-direction:column;gap:10px}
+.savebar{position:sticky;bottom:0;background:var(--bg);padding-block:12px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<header class="hero">
+  <canvas id="snow" aria-hidden="true"></canvas>
+  <div class="hero-in">
+    <span class="eyebrow">Área restrita</span>
+    <h1>Admin do <em>Amigo Secreto</em></h1>
+    <p class="lead">Digite a senha para editar os presentes.</p>
+  </div>
+</header>
+<div class="garland" aria-hidden="true"></div>
+<div class="wrap">
+  <section id="login" class="login">
+    <form id="lf">
+      <label for="pw">Senha
+        <input id="pw" type="password" autocomplete="current-password" required></label>
+      <label for="tok" id="tokwrap" hidden>Token do GitHub <span class="hint">Só na primeira vez. Depois basta a senha.</span>
+        <input id="tok" type="password" autocomplete="off" placeholder="github_pat_…"></label>
+      <label for="rem" style="flex-direction:row;align-items:center;gap:8px;font-weight:400"><input id="rem" type="checkbox" checked style="width:auto"> Lembrar neste aparelho</label>
+      <div class="actions"><button class="btn" type="submit" id="go">Entrar</button><span class="msg" id="lmsg" role="status"></span></div>
+    </form>
+    <div class="note" id="howto" hidden>
+      <strong>Configuração inicial (uma vez só):</strong>
+      <ol>
+        <li>No GitHub: Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token.</li>
+        <li>Em <em>Repository access</em>, escolha <em>Only select repositories</em> e marque este repositório.</li>
+        <li>Em <em>Permissions → Contents</em>, escolha <em>Read and write</em>.</li>
+        <li>Cole o token acima junto com a senha. Ele fica guardado criptografado no repositório.</li>
+      </ol>
+    </div>
+  </section>
+  <section id="editor" hidden>
+    <div class="bar" style="justify-content:space-between"><span class="count" id="info"></span>
+      <button class="btn ghost" type="button" id="out">Sair</button></div>
+    <div class="list" id="people" style="margin-top:14px"></div>
+    <div class="savebar"><button class="btn" type="button" id="save">Salvar tudo</button>
+      <a href="./" class="back">Ver o site</a><span class="msg" id="smsg" role="status"></span></div>
+  </section>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const FIELDS=[["quero","O que gostaria de ganhar","Uma ideia por linha",true],["tamanhos","Tamanhos","",false],["gostos","Cores ou gostos","",false],["links","Links de exemplo","Um por linha",true],["naoquero","Não quero ganhar","",false]];
+let token=null,sha=null,data={};
+const host=location.hostname, owner=host.endsWith(".github.io")?host.split(".")[0]:"";
+const repo=location.pathname.split("/").filter(Boolean).filter(s=>!s.endsWith(".html"))[0]||(owner+".github.io");
+const API=`https://api.github.com/repos/${owner}/${repo}/contents/presentes.json`;
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+const b64dec=s=>new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\s/g,"")),c=>c.charCodeAt(0)));
+const b64enc=s=>{const b=new TextEncoder().encode(s);let r="";b.forEach(x=>r+=String.fromCharCode(x));return btoa(r)};
+const hdr=()=>({Authorization:"Bearer "+token,Accept:"application/vnd.github+json"});
+async function load(){
+  const r=await fetch(API+"?t="+Date.now(),{headers:hdr(),cache:"no-store"});
+  if(r.status===401||r.status===403) throw "Chave inválida ou sem permissão neste repositório.";
+  if(!r.ok) throw "Não encontrei o arquivo presentes.json no repositório.";
+  const j=await r.json(); sha=j.sha; data=JSON.parse(b64dec(j.content));
+}
+function render(){
+  const box=$("people");box.innerHTML="";let n=0;
+  Object.keys(data).forEach((name,i)=>{
+    const d=data[name]||(data[name]={}); const ok=String(d.quero||"").trim(); if(ok) n++;
+    const det=document.createElement("details");det.className="person";
+    det.innerHTML=`<summary><span class="nm">${esc(name)}</span><span class="st ${ok?"on":""}">${ok?"Preenchido":"Vazio"}</span></summary>
+      <form onsubmit="return false">${FIELDS.map(([k,l,h,big])=>`<label for="p${i}-${k}">${l}${h?` <span class="hint">${h}</span>`:""}
+        ${big?`<textarea id="p${i}-${k}" data-i="${i}" data-k="${k}">${esc(d[k])}</textarea>`:`<input id="p${i}-${k}" data-i="${i}" data-k="${k}" value="${esc(d[k])}">`}</label>`).join("")}</form>`;
+    box.appendChild(det);
+  });
+  $("info").textContent=`${n} de ${Object.keys(data).length} preenchidos`;
+  const names=Object.keys(data);
+  box.querySelectorAll("[data-k]").forEach(el=>el.addEventListener("input",()=>{data[names[el.dataset.i]][el.dataset.k]=el.value;$("smsg").className="msg";$("smsg").textContent="Alterações não salvas"}));
+}
+const PW_CHECK="fe22b9b15e6cba38dbb2adaa701aa3c5c7b12eaaeac512c3f7621f678b414a83";
+const enc=new TextEncoder(), b64=u=>btoa(String.fromCharCode(...u)), unb64=t=>Uint8Array.from(atob(t),c=>c.charCodeAt(0));
+async function pbk(pw,salt,bits){const k=await crypto.subtle.importKey("raw",enc.encode(pw),"PBKDF2",false,["deriveBits"]);
+  return new Uint8Array(await crypto.subtle.deriveBits({name:"PBKDF2",hash:"SHA-256",salt,iterations:250000},k,bits))}
+async function pwOk(pw){const h=await pbk(pw,enc.encode("amigo-secreto-natal-check"),256);return [...h].map(x=>x.toString(16).padStart(2,"0")).join("")===PW_CHECK}
+async function aesKey(pw,salt){return crypto.subtle.importKey("raw",await pbk(pw,salt,256),"AES-GCM",false,["encrypt","decrypt"])}
+let cfg=null;
+async function loadCfg(){try{const r=await fetch("config.json?v="+Date.now(),{cache:"no-store"});if(r.ok){const j=await r.json();if(j&&j.data)return j}}catch(e){}
+  try{const l=localStorage.getItem("amigo-cfg");if(l)return JSON.parse(l)}catch(e){}return null}
+function lmsg(t,err){$("lmsg").className="msg"+(err?" err":"");$("lmsg").textContent=t}
+async function start(t,remember){
+  token=t;
+  await load();
+  try{remember?localStorage.setItem("amigo-token",t):localStorage.removeItem("amigo-token")}catch(e){}
+  $("login").hidden=true;$("editor").hidden=false;lmsg("");render();
+}
+async function login(){
+  const pw=$("pw").value, remember=$("rem").checked, go=$("go"); go.disabled=true; lmsg("Entrando…");
+  try{
+    if(!owner) throw "Abra esta página pelo endereço do GitHub Pages (…github.io).";
+    if(!(await pwOk(pw))) throw "Senha incorreta.";
+    if(cfg){
+      const t=new TextDecoder().decode(await crypto.subtle.decrypt({name:"AES-GCM",iv:unb64(cfg.iv)},await aesKey(pw,unb64(cfg.salt)),unb64(cfg.data)));
+      await start(t,remember); return;
+    }
+    const t=$("tok").value.trim();
+    if(!t) throw "Primeira vez: cole também o token do GitHub.";
+    token=t; await load();
+    const salt=crypto.getRandomValues(new Uint8Array(16)), iv=crypto.getRandomValues(new Uint8Array(12));
+    const ct=new Uint8Array(await crypto.subtle.encrypt({name:"AES-GCM",iv},await aesKey(pw,salt),enc.encode(t)));
+    const c={salt:b64(salt),iv:b64(iv),data:b64(ct)};
+    const url=API.replace("presentes.json","config.json");
+    const ex=await fetch(url+"?t="+Date.now(),{headers:hdr(),cache:"no-store"});
+    const body={message:"Configura acesso da área restrita",content:b64enc(JSON.stringify(c)+"\n")};
+    if(ex.ok) body.sha=(await ex.json()).sha;
+    const r=await fetch(url,{method:"PUT",headers:hdr(),body:JSON.stringify(body)});
+    if(!r.ok) throw "Não consegui guardar a configuração. Confira se o token tem permissão de escrita.";
+    cfg=c; try{localStorage.setItem("amigo-cfg",JSON.stringify(c))}catch(e){}
+    await start(t,remember);
+  }catch(e){token=null;lmsg(typeof e==="string"?e:"Senha incorreta ou sem conexão com o GitHub.",true)}
+  finally{go.disabled=false}
+}
+$("lf").addEventListener("submit",e=>{e.preventDefault();login()});
+$("out").onclick=()=>{try{localStorage.removeItem("amigo-token")}catch(e){};token=null;$("editor").hidden=true;$("login").hidden=false;$("pw").value="";$("tok").value=""};
+$("save").onclick=async()=>{
+  const b=$("save"),m=$("smsg");b.disabled=true;m.className="msg";m.textContent="Salvando…";
+  try{
+    Object.values(data).forEach(d=>Object.keys(d).forEach(k=>d[k]=String(d[k]).trim()));
+    const r=await fetch(API,{method:"PUT",headers:hdr(),body:JSON.stringify({message:"Atualiza lista de presentes",content:b64enc(JSON.stringify(data,null,2)+"\n"),sha})});
+    if(r.status===409||r.status===422){m.className="msg err";m.textContent="O arquivo mudou em outro lugar. Saia e entre de novo antes de salvar.";return}
+    if(!r.ok) throw 0;
+    sha=(await r.json()).content.sha; render();
+    m.textContent="Salvo! O site atualiza em cerca de 1 minuto.";
+  }catch(e){m.className="msg err";m.textContent="Não deu para salvar. Confira a conexão e a chave."}
+  finally{b.disabled=false}
+};
+(async()=>{cfg=await loadCfg();$("tokwrap").hidden=!!cfg;$("howto").hidden=!!cfg;
+  let t=null;try{t=localStorage.getItem("amigo-token")}catch(e){}
+  if(t&&owner){try{await start(t,true)}catch(e){token=null}}})();
+(function snow(){
+  const c=$("snow"); if(!c||!c.getContext) return;
+  const x=c.getContext("2d"); let w,h,flakes=[];
+  const still=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function size(){const r=c.getBoundingClientRect(),d=window.devicePixelRatio||1;w=r.width;h=r.height;c.width=w*d;c.height=h*d;x.setTransform(d,0,0,d,0,0);
+    flakes=Array.from({length:Math.round(w/14)},()=>({x:Math.random()*w,y:Math.random()*h,r:1+Math.random()*2.4,s:.3+Math.random()*.8,d:Math.random()*6}))}
+  function draw(){x.clearRect(0,0,w,h);x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue("--snow")||"#fff";
+    flakes.forEach(f=>{x.beginPath();x.arc(f.x,f.y,f.r,0,7);x.fill();if(!still){f.y+=f.s;f.x+=Math.sin((f.y+f.d*40)/40)*.3;if(f.y>h+4){f.y=-4;f.x=Math.random()*w}}});
+    if(!still) requestAnimationFrame(draw)}
+  size();addEventListener("resize",size);draw();
+})();
+</script>
+</body>
+</html>
