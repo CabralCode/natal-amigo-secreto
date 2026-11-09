@@ -103,7 +103,7 @@ form textarea{min-height:96px;resize:vertical}
   <div class="hero-in">
     <span class="eyebrow">Natal 2026 · 15 participantes</span>
     <h1>Amigo Secreto <em>de Natal</em></h1>
-    <p class="lead">Toque no nome de quem você tirou para ver o que essa pessoa quer ganhar.</p>
+    <p class="lead">Quem você tirou? Toque no nome da pessoa para ver os presentes que ela gostaria de ganhar.</p>
   </div>
 </header>
 <div class="garland" aria-hidden="true"></div>
@@ -113,14 +113,14 @@ form textarea{min-height:96px;resize:vertical}
   
   <section id="list" aria-label="Participantes">
     <div class="bar">
-      <input id="q" type="search" placeholder="Buscar nome…" aria-label="Buscar nome" autocomplete="off">
+      <input id="q" type="search" placeholder="Digite o nome de quem você tirou…" aria-label="Buscar nome" autocomplete="off">
       <span class="count" id="count"></span>
     </div>
     <ul class="grid" id="grid" style="margin-top:14px"></ul>
   </section>
 
   <section id="detail" class="sheet" hidden aria-live="polite"></section>
-  <p class="foot">Boas festas! Guarde segredo de quem você tirou.<br><a href="admin.html" style="color:var(--muted)">Área restrita</a><br><span style="font-size:12px;opacity:.7">Versão 1.3 · 09/11 17:10</span></p>
+  <p class="foot">Boas festas! Guarde segredo de quem você tirou.<br><a href="admin.html" style="color:var(--muted)">Área restrita</a><br><span style="font-size:12px;opacity:.7">Versão 1.4 · 09/11 17:15</span></p>
 </div>
 <script>
 const $=id=>document.getElementById(id);
@@ -135,7 +135,7 @@ function renderGrid(){
     if(q&&!name.toLowerCase().includes(q))return;
     const li=document.createElement("li"),b=document.createElement("button");
     b.type="button";b.className="tagbtn"+(filled(d)?" filled":"");
-    b.innerHTML=`<span class="nm">${esc(name)}</span><span class="st ${filled(d)?"on":""}">${filled(d)?"Lista pronta":"Ainda não preencheu"}</span>`;
+    b.innerHTML=`<span class="nm">${esc(name)}</span><span class="st ${filled(d)?"on":""}">${filled(d)?"Ver presentes →":"Ainda sem presentes"}</span>`;
     b.onclick=()=>open(name);li.appendChild(b);g.appendChild(li)});
   $("count").textContent=`${n} de ${NAMES.length} já preencheram`;
 }
@@ -145,11 +145,10 @@ function renderDetail(){
   const d=PRESENTES[current]||{};
   const row=(lbl,v,html)=>`<div class="field"><span class="lbl">${lbl}</span>${v&&String(v).trim()?`<p class="val">${html?linkify(v):esc(v)}</p>`:`<p class="val empty">—</p>`}</div>`;
   $("detail").innerHTML=`<button class="back" type="button" id="back">← Voltar para a lista</button>
-    <div class="sheet-top"><h2>${esc(current)}</h2></div>
-    ${filled(d)?`${row("Gostaria de ganhar",d.quero,true)}
-      <div class="two">${row("Tamanhos",d.tamanhos)}${row("Cores ou gostos",d.gostos)}</div>
-      ${row("Links de exemplo",d.links,true)}${row("Não quero ganhar",d.naoquero)}`
-    :`<p class="empty" style="margin:0">${esc(current)} ainda não escreveu o que quer ganhar.</p>`}`;
+    <div class="sheet-top"><div><span class="lbl">Presentes para</span><h2>${esc(current)}</h2></div></div>
+    ${filled(d)?`${row("Escolha um destes presentes",d.quero,true)}
+      <div class="two">${row("Tamanhos",d.tamanhos)}${row("Cores ou gostos",d.gostos)}</div>`
+    :`<p class="empty" style="margin:0">Os presentes de ${esc(current)} ainda não foram cadastrados. Volte mais tarde.</p>`}`;
   $("back").onclick=close;
 }
 $("q").addEventListener("input",renderGrid);

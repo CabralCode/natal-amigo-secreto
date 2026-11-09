@@ -143,7 +143,7 @@ form textarea{min-height:96px;resize:vertical}
 </div>
 <script>
 const $=id=>document.getElementById(id);
-const FIELDS=[["quero","O que gostaria de ganhar","Uma ideia por linha",true],["tamanhos","Tamanhos","",false],["gostos","Cores ou gostos","",false],["links","Links de exemplo","Um por linha",true],["naoquero","Não quero ganhar","",false]];
+const FIELDS=[["quero","Presentes","Um por linha",true],["tamanhos","Tamanhos","",false],["gostos","Cores ou gostos","",false]];
 let token=null,sha=null,data={};
 const host=location.hostname, owner=host.endsWith(".github.io")?host.split(".")[0]:"";
 const repo=location.pathname.split("/").filter(Boolean).filter(s=>!s.endsWith(".html"))[0]||(owner+".github.io");
