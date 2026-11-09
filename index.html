@@ -146,6 +146,18 @@ html{-webkit-tap-highlight-color:transparent}
 .hero-av{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
 .hero-av .av{width:120px;height:120px;font-size:44px;box-shadow:0 0 0 3px var(--gold)}
 .hero-av .nm2{font-family:var(--display);font-weight:800;font-size:26px;line-height:1.1}
+.cta{display:flex;align-items:center;gap:14px;width:100%;text-align:left;font:inherit;cursor:pointer;color:var(--band-ink);
+  background:var(--band);border:0;border-radius:18px;padding:16px 18px;box-shadow:0 0 0 2px var(--gold) inset}
+.cta:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.cta:active{transform:scale(.99)}
+.cta .ic{font-size:30px;line-height:1}
+.cta b{display:block;font-family:var(--display);font-size:19px;font-weight:800}
+.cta small{display:block;font-size:13.5px;opacity:.88}
+.wa{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:inherit;font-weight:700;font-size:16px;text-decoration:none;
+  background:#1f9d55;color:#fff;border:0;border-radius:14px;padding:14px 18px;cursor:pointer;width:100%}
+.wa[aria-disabled="true"]{opacity:.5;pointer-events:none}
+#cadastro select{font:inherit;font-weight:400;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
+#cadastro h2{font-family:var(--display);font-weight:800;font-size:clamp(24px,6vw,32px);margin:0}
 .gifts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
 .gifts li{display:flex;gap:10px;align-items:flex-start;background:var(--tag);border-radius:12px;padding:12px 14px;font-size:17px;overflow-wrap:anywhere}
 .gifts li::before{content:"🎁";flex:none}
@@ -168,7 +180,8 @@ html{-webkit-tap-highlight-color:transparent}
 
   
   <section id="list" aria-label="Participantes">
-    <div class="bar">
+    <button type="button" class="cta" id="cta"><span class="ic" aria-hidden="true">🎁</span><span><b>Cadastrar meus presentes</b><small>Escolha seu nome, escreva o que quer ganhar e envie.</small></span></button>
+    <div class="bar" style="margin-top:16px">
       <input id="q" type="search" placeholder="Digite o nome de quem você tirou…" aria-label="Buscar nome" autocomplete="off">
       <span class="count" id="count"></span>
     </div>
@@ -176,7 +189,25 @@ html{-webkit-tap-highlight-color:transparent}
   </section>
 
   <section id="detail" class="sheet" hidden aria-live="polite"></section>
-  <p class="foot">Boas festas! Guarde segredo de quem você tirou.<br><a href="admin.html" style="color:var(--muted)">Área restrita</a><br><span style="font-size:12px;opacity:.7">Versão 1.8 · 09/11 17:25</span></p>
+  <section id="cadastro" class="sheet" hidden>
+    <button class="back" type="button" id="cad-back">← Voltar para a lista</button>
+    <h2>Cadastrar meus presentes</h2>
+    <form id="cf" novalidate>
+      <label for="c-nome">Quem é você?
+        <select id="c-nome"><option value="">Selecione seu nome</option></select></label>
+      <label for="c-quero">Presentes que você gostaria de ganhar <span class="hint">Um por linha. Coloque algumas opções.</span>
+        <textarea id="c-quero" maxlength="1200" placeholder="Ex.: Livro de receitas&#10;Caneca térmica&#10;Perfume"></textarea></label>
+      <div class="two">
+        <label for="c-tam">Tamanhos <span class="hint">Roupa, calçado…</span>
+          <input id="c-tam" maxlength="120" placeholder="Ex.: Camisa M · Calçado 38"></label>
+        <label for="c-gostos">Cores ou gostos <span class="hint">Opcional</span>
+          <input id="c-gostos" maxlength="160" placeholder="Ex.: Gosto de azul"></label>
+      </div>
+      <a class="wa" id="c-send" href="#" target="_blank" rel="noopener" aria-disabled="true">Enviar pelo WhatsApp</a>
+      <p class="msg" id="c-msg">Preencha seu nome e pelo menos um presente.</p>
+    </form>
+  </section>
+  <p class="foot">Boas festas! Guarde segredo de quem você tirou.<br><a href="admin.html" style="color:var(--muted)">Área restrita</a><br><span style="font-size:12px;opacity:.7">Versão 1.9 · 09/11 17:35</span></p>
 </div>
 <script>
 const $=id=>document.getElementById(id);
@@ -197,11 +228,28 @@ function renderGrid(){
     b.insertAdjacentHTML("beforeend",'<span class="chev" aria-hidden="true">›</span>');b.onclick=()=>open(name);li.appendChild(b);g.appendChild(li)});
   $("count").textContent=`${n} de ${NAMES.length} já preencheram`;
 }
-function show(name){current=name;document.body.classList.add("in-detail");$("ab-title").textContent=name;$("list").hidden=true;$("detail").hidden=false;renderDetail();scrollTo(0,0)}
+function show(name){$("cadastro").hidden=true;current=name;document.body.classList.add("in-detail");$("ab-title").textContent=name;$("list").hidden=true;$("detail").hidden=false;renderDetail();scrollTo(0,0)}
 function open(name){show(name);history.pushState({p:name},"","#"+encodeURIComponent(name))}
-function hide(){current=null;document.body.classList.remove("in-detail");$("detail").hidden=true;$("list").hidden=false;renderGrid()}
-function close(){if(history.state&&history.state.p)history.back();else{hide();history.replaceState(null,"",location.pathname)}}
-addEventListener("popstate",()=>{const h=decodeURIComponent(location.hash.slice(1));if(h&&PRESENTES[h])show(h);else hide()});
+function hide(){current=null;document.body.classList.remove("in-detail");$("detail").hidden=true;$("cadastro").hidden=true;$("list").hidden=false;renderGrid()}
+function close(){if(history.state&&(history.state.p||history.state.c))history.back();else{hide();history.replaceState(null,"",location.pathname)}}
+addEventListener("popstate",()=>{const h=decodeURIComponent(location.hash.slice(1));if(h==="cadastrar")showForm();else if(h&&PRESENTES[h])show(h);else hide()});
+const WA="5511977966100";
+function showForm(pref){current=null;document.body.classList.add("in-detail");$("ab-title").textContent="Cadastrar presentes";
+  $("list").hidden=true;$("detail").hidden=true;$("cadastro").hidden=false;
+  const sel=$("c-nome");if(sel.options.length<2)NAMES.forEach(n=>sel.add(new Option(n,n)));
+  if(pref)sel.value=pref;updateWA();scrollTo(0,0)}
+function openForm(pref){showForm(pref);history.pushState({c:1},"","#cadastrar")}
+function updateWA(){
+  const nome=$("c-nome").value, itens=$("c-quero").value.split(/\n+/).map(t=>t.trim()).filter(Boolean);
+  const tam=$("c-tam").value.trim(), gostos=$("c-gostos").value.trim(), a=$("c-send"), m=$("c-msg");
+  if(!nome||!itens.length){a.setAttribute("aria-disabled","true");a.href="#";m.className="msg";
+    m.textContent=!nome?"Selecione seu nome para continuar.":"Escreva pelo menos um presente.";return}
+  let t=`🎄 *Amigo Secreto de Natal*\n*Nome:* ${nome}\n\n*Presentes:*\n${itens.map(i=>"• "+i).join("\n")}`;
+  if(tam)t+=`\n\n*Tamanhos:* ${tam}`; if(gostos)t+=`\n*Cores ou gostos:* ${gostos}`;
+  a.href=`https://wa.me/${WA}?text=${encodeURIComponent(t)}`;a.removeAttribute("aria-disabled");
+  m.className="msg";m.textContent="Ao tocar, o WhatsApp abre com a mensagem pronta. É só apertar enviar."}
+["c-nome","c-quero","c-tam","c-gostos"].forEach(id=>{$(id).addEventListener("input",updateWA);$(id).addEventListener("change",updateWA)});
+$("cta").onclick=()=>openForm();$("cad-back").onclick=close;$("cf").addEventListener("submit",e=>e.preventDefault());
 function renderDetail(){
   const d=PRESENTES[current]||{};
   const row=(lbl,v,html)=>`<div class="field"><span class="lbl">${lbl}</span>${v&&String(v).trim()?`<p class="val">${html?linkify(v):esc(v)}</p>`:`<p class="val empty">—</p>`}</div>`;
@@ -209,7 +257,9 @@ function renderDetail(){
     <div class="hero-av">${avatar(current,d)}<div><span class="lbl">Presentes para</span><div class="nm2">${esc(current)}</div></div></div>
     ${filled(d)?`<div class="field"><span class="lbl">Escolha um destes presentes</span><ul class="gifts">${String(d.quero).split(/\n+/).filter(t=>t.trim()).map(t=>`<li><span>${linkify(t.trim())}</span></li>`).join("")}</ul></div>
       ${[d.tamanhos&&String(d.tamanhos).trim()?row("Tamanhos",d.tamanhos):"",d.gostos&&String(d.gostos).trim()?row("Cores ou gostos",d.gostos):""].filter(Boolean).length?`<div class="two">${d.tamanhos&&String(d.tamanhos).trim()?row("Tamanhos",d.tamanhos):""}${d.gostos&&String(d.gostos).trim()?row("Cores ou gostos",d.gostos):""}</div>`:""}`
-    :`<p class="empty" style="margin:0">Os presentes de ${esc(current)} ainda não foram cadastrados. Volte mais tarde.</p>`}`;
+    :`<p class="empty" style="margin:0">Os presentes de ${esc(current)} ainda não foram cadastrados. Volte mais tarde.</p>
+      <button class="btn ghost" type="button" id="soueu">É você, ${esc(current)}? Cadastre seus presentes</button>`}`;
+  const se=$("soueu");if(se)se.onclick=()=>{const n=current;history.replaceState({c:1},"","#cadastrar");showForm(n)};
   $("back").onclick=close;
 }
 $("q").addEventListener("input",renderGrid);
@@ -227,7 +277,7 @@ $("ab-back").onclick=close;
 })();
 $("count").textContent="Carregando…";
 fetch("presentes.json?v="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(d=>{PRESENTES=d;NAMES=Object.keys(d);renderGrid();
-  const h=decodeURIComponent(location.hash.slice(1));if(h&&PRESENTES[h])show(h);
+  const h=decodeURIComponent(location.hash.slice(1));if(h==="cadastrar")showForm();else if(h&&PRESENTES[h])show(h);
 }).catch(()=>{$("count").textContent="Não foi possível carregar a lista. Atualize a página."});
 </script>
 </body>
