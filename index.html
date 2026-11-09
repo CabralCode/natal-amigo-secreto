@@ -11,18 +11,18 @@
 :root{
   --bg:#fbf6f0; --paper:#ffffff; --ink:#2a1b1b; --muted:#6e5c58; --line:#ead9cf;
   --pine:#1d5a3a; --pine-ink:#ffffff; --berry:#b3202f; --tag:#f6e8dc; --ok:#1d7a47;
-  --band:#9e1b2a; --band-ink:#fff6ea; --gold:#c9972b; --snow:rgba(255,255,255,.85);
+  --band:#9e1b2a; --band-ink:#fff6ea; --filled:#1f6e43; --ribbon:#d0202f; --gold:#c9972b; --snow:rgba(255,255,255,.85);
   --display:"Fraunces",Georgia,"Times New Roman",serif;
   --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#0f1a14; --paper:#16241c; --ink:#f3ece4; --muted:#b4a89f; --line:#2b3d32;
   --pine:#6cc995; --pine-ink:#0d1a12; --berry:#f07a84; --tag:#1d3026; --ok:#7fdca5;
-  --band:#6e1220; --band-ink:#fff3e2; --gold:#e3b54f; --snow:rgba(255,255,255,.7); color-scheme:dark}}
+  --band:#6e1220; --band-ink:#fff3e2; --filled:#1d7445; --ribbon:#e0323f; --gold:#e3b54f; --snow:rgba(255,255,255,.7); color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0f1a14; --paper:#16241c; --ink:#f3ece4; --muted:#b4a89f; --line:#2b3d32;
   --pine:#6cc995; --pine-ink:#0d1a12; --berry:#f07a84; --tag:#1d3026; --ok:#7fdca5;
-  --band:#6e1220; --band-ink:#fff3e2; --gold:#e3b54f; --snow:rgba(255,255,255,.7); color-scheme:dark}
+  --band:#6e1220; --band-ink:#fff3e2; --filled:#1d7445; --ribbon:#e0323f; --gold:#e3b54f; --snow:rgba(255,255,255,.7); color-scheme:dark}
 *{box-sizing:border-box}
 .hero{position:relative;overflow:hidden;background:var(--band);color:var(--band-ink);
   background-image:radial-gradient(circle at 15% 120%,rgba(255,255,255,.08) 0 40%,transparent 41%),radial-gradient(circle at 90% -30%,rgba(255,255,255,.07) 0 35%,transparent 36%)}
@@ -38,6 +38,11 @@
 .tagbtn::after{content:"";position:absolute;right:12px;top:-3px;width:14px;height:20px;background:var(--gold);
   clip-path:polygon(0 0,100% 0,100% 100%,50% 75%,0 100%)}
 .sheet{border-top:4px solid var(--berry)}
+.tagbtn.filled{background:var(--filled);border-color:var(--filled);color:#fff}
+.tagbtn.filled:hover{border-color:var(--filled);filter:brightness(1.08)}
+.tagbtn.filled .st,.tagbtn.filled .st.on{color:#fff;opacity:.92}
+.tagbtn.filled::after{background:var(--ribbon)}
+.tagbtn.filled::before{background:#fff;border-color:#fff}
 .foot{text-align:center;color:var(--muted);font-size:13px}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5}
 .wrap{max-width:880px;margin:0 auto;padding-block:28px 56px;
