@@ -158,6 +158,9 @@ html{-webkit-tap-highlight-color:transparent}
 .wa[aria-disabled="true"]{opacity:.5;pointer-events:none}
 #cadastro select{font:inherit;font-weight:400;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
 #cadastro h2{font-family:var(--display);font-weight:800;font-size:clamp(24px,6vw,32px);margin:0}
+.lk{display:inline-block;margin-top:4px;font-size:14px;font-weight:600;color:var(--pine);white-space:nowrap}
+.gifts li span{min-width:0}
+.gifts li .lk{display:block}
 .gifts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
 .gifts li{display:flex;gap:10px;align-items:flex-start;background:var(--tag);border-radius:12px;padding:12px 14px;font-size:17px;overflow-wrap:anywhere}
 .gifts li::before{content:"🎁";flex:none}
@@ -207,14 +210,14 @@ html{-webkit-tap-highlight-color:transparent}
       <p class="msg" id="c-msg">Preencha seu nome e pelo menos um presente.</p>
     </form>
   </section>
-  <p class="foot">Boas festas! Guarde segredo de quem você tirou.<br><a href="admin.html" style="color:var(--muted)">Área restrita</a><br><span style="font-size:12px;opacity:.7">Versão 1.9 · 09/11 17:35</span></p>
+  <p class="foot">Boas festas! Guarde segredo de quem você tirou.<br><a href="admin.html" style="color:var(--muted)">Área restrita</a><br><span style="font-size:12px;opacity:.7">Versão 2.0 · 15/11 20:05</span></p>
 </div>
 <script>
 const $=id=>document.getElementById(id);
 let PRESENTES={},NAMES=[];
 let current=null;
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function linkify(s){return esc(s).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>')}
+function linkify(s){return esc(s).replace(/:?\s*(https?:\/\/[^\s<]+)/g,(m,u)=>{let h="";try{h=new URL(u.replace(/&amp;/g,"&")).hostname.replace(/^www\./,"")}catch(e){}return ` <a class="lk" href="${u}" target="_blank" rel="noopener">Ver em ${h||"link"} ↗</a>`})}
 function initials(n){const p=n.trim().split(/\s+/);return (p[0][0]+(p.length>1?p[p.length-1][0]:"")).toUpperCase()}
 function avatar(n,d){return d&&d.foto?`<img class="av" src="${esc(d.foto)}" alt="" loading="lazy">`:`<span class="av" aria-hidden="true">${esc(initials(n))}</span>`}
 function filled(d){return d && String(d.quero||"").trim().length>0}
