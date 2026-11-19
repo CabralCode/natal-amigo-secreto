@@ -47,9 +47,9 @@
     "foto": "fotos/gustavo.jpg"
   },
   "Bento": {
-    "quero": "",
+    "quero": "Camiseta de time (clubes), infantil\nExemplo: Camiseta infantil Barcelona, manga curta\nExemplo: Camiseta infantil Manchester City degradê, azul-escuro",
     "tamanhos": "",
-    "gostos": "",
+    "gostos": "Camisetas de clubes de futebol",
     "foto": "fotos/bento.jpg"
   },
   "João": {
