@@ -47,9 +47,9 @@
     "foto": "fotos/gustavo.jpg"
   },
   "Bento": {
-    "quero": "Camiseta de time (clubes), infantil\nExemplo: Camiseta infantil Barcelona, manga curta\nExemplo: Camiseta infantil Manchester City degradê, azul-escuro",
+    "quero": "Camiseta infantil de time de fora (clubes internacionais), sem ser Palmeiras ou Corinthians\nExemplo: Camiseta infantil Manchester City degradê, azul-escuro",
     "tamanhos": "",
-    "gostos": "Camisetas de clubes de futebol",
+    "gostos": "Não precisa ser camisa oficial; tem na Renner e na Riachuelo. Ele já tem a do Barcelona.",
     "foto": "fotos/bento.jpg"
   },
   "João": {
